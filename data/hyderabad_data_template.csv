@@ -1,0 +1,21 @@
+location,total_sqft,bhk,bath,price
+Madhapur,1200,2,2,4500000
+Madhapur,1500,3,2,6500000
+Madhapur,1800,3,3,8500000
+Madhapur,2000,4,3,9500000
+Gachibowli,1000,2,1,3500000
+Gachibowli,1200,2,2,4200000
+Gachibowli,1600,3,2,6200000
+Gachibowli,1800,3,3,7200000
+Kukatpally,900,1,1,2500000
+Kukatpally,1100,2,1,3200000
+Kukatpally,1400,3,2,4500000
+Kukatpally,1700,3,3,5500000
+Banjara Hills,800,1,1,4000000
+Banjara Hills,1000,2,1,5500000
+Banjara Hills,1300,2,2,7500000
+Banjara Hills,1500,3,2,9500000
+Jubilee Hills,2000,4,2,12000000
+Jubilee Hills,2500,4,3,15000000
+Jubilee Hills,3000,5,3,18000000
+Jubilee Hills,3500,5,4,22000000

@@ -1,0 +1,187 @@
+@startuml Hyderabad House Price Prediction System
+
+!theme plain
+
+' High-Level Architecture
+package "User Interface Layer" {
+    [Streamlit GUI] as GUI
+    [Command Line Interface] as CLI
+}
+
+package "Business Logic Layer" {
+    class HyderabadTimeSeriesPredictor {
+        -data_processor: TimeSeriesDataProcessor
+        -model_trainer: TimeSeriesModelTrainer
+        -forecaster: TimeSeriesForecaster
+        -training_data: DataFrame
+        -is_trained: boolean
+        --
+        +__init__()
+        +load_and_train(csv_path: str): dict
+        +predict_property_price(location, sqft, bhk, bath, date): dict
+        +forecast_price_trend(location, sqft, bhk, bath, start_date, end_date, frequency): list
+    }
+    
+    class TimeSeriesDataProcessor {
+        -feature_columns: list
+        -categorical_columns: list
+        --
+        +__init__()
+        +preprocess_time_series_data(data: DataFrame): DataFrame
+        +create_date_features(data: DataFrame): DataFrame
+        +create_lag_features(data: DataFrame): DataFrame
+        +create_rolling_features(data: DataFrame): DataFrame
+        +encode_categorical_features(data: DataFrame): DataFrame
+    }
+    
+    class TimeSeriesModelTrainer {
+        -models: dict
+        -model_performance: dict
+        -best_model: object
+        -best_model_name: str
+        --
+        +__init__()
+        +train_time_series_split(X, y): dict
+        +train_single_model(name, model, X_train, y_train, X_test, y_test): dict
+        +predict(X): array
+    }
+    
+    class TimeSeriesForecaster {
+        -model_trainer: TimeSeriesModelTrainer
+        -data_processor: TimeSeriesDataProcessor
+        -best_model: object
+        -best_model_name: str
+        --
+        +__init__(model_trainer, data_processor)
+        +forecast_future_prices(base_data, future_dates, location, property_features): list
+        +predict(X): array
+    }
+}
+
+package "Data Layer" {
+    [CSV Data Files] as CSV
+    [Streamlit Cache] as CACHE
+}
+
+package "Machine Learning Layer" {
+    [Linear Regression] as LR
+    [Random Forest] as RF
+    [Gradient Boosting] as GB
+}
+
+' Relationships
+GUI --> HyderabadTimeSeriesPredictor
+CLI --> HyderabadTimeSeriesPredictor
+
+HyderabadTimeSeriesPredictor --> TimeSeriesDataProcessor
+HyderabadTimeSeriesPredictor --> TimeSeriesModelTrainer
+HyderabadTimeSeriesPredictor --> TimeSeriesForecaster
+
+TimeSeriesForecaster --> TimeSeriesModelTrainer
+TimeSeriesForecaster --> TimeSeriesDataProcessor
+
+TimeSeriesDataProcessor --> CSV
+HyderabadTimeSeriesPredictor --> CACHE
+
+TimeSeriesModelTrainer --> LR
+TimeSeriesModelTrainer --> RF
+TimeSeriesModelTrainer --> GB
+
+' Data Flow
+database "Property Data" {
+    [date: datetime]
+    [location: string]
+    [total_sqft: int]
+    [bhk: int]
+    [bath: int]
+    [price: float]
+    [year: int]
+    [month: int]
+    [quarter: int]
+    [day_of_year: int]
+    [week_of_year: int]
+    [month_sin: float]
+    [month_cos: float]
+    [quarter_sin: float]
+    [quarter_cos: float]
+    [days_since_start: int]
+    [is_quarter_end: boolean]
+    [is_year_end: boolean]
+    [price_lag_1: float]
+    [price_change_lag_1: float]
+    [price_rolling_mean_3: float]
+    [price_rolling_std_3: float]
+    [price_rolling_min_3: float]
+    [price_rolling_max_3: float]
+    [price_rolling_trend_3: float]
+    [location_price_mean: float]
+    [location_price_median: float]
+    [location_price_std: float]
+    [price_per_sqft: float]
+    [bhk_per_sqft: float]
+    [bath_per_sqft: float]
+    [bhk_to_bath_ratio: float]
+    [location_price_level: string]
+}
+
+' Component Sequence
+actor User
+User -> GUI: Select Location & Properties
+User -> GUI: Choose Date(s)
+User -> GUI: Click Predict
+
+GUI -> HyderabadTimeSeriesPredictor: predict_property_price()
+
+HyderabadTimeSeriesPredictor -> TimeSeriesDataProcessor: preprocess_time_series_data()
+TimeSeriesDataProcessor --> HyderabadTimeSeriesPredictor: Processed Data
+
+HyderabadTimeSeriesPredictor -> TimeSeriesModelTrainer: train_time_series_split()
+TimeSeriesModelTrainer -> TimeSeriesModelTrainer: train_single_model() for each model
+TimeSeriesModelTrainer --> HyderabadTimeSeriesPredictor: Best Model
+
+HyderabadTimeSeriesPredictor -> TimeSeriesForecaster: forecast_future_prices()
+TimeSeriesForecaster -> TimeSeriesForecaster: Apply Property Adjustments
+TimeSeriesForecaster --> HyderabadTimeSeriesPredictor: Adjusted Predictions
+
+HyderabadTimeSeriesPredictor --> GUI: Price Results
+GUI --> User: Display Predictions
+
+' Feature Engineering Pipeline
+package "Feature Engineering" {
+    [Raw CSV Data] as RAW
+    [Data Validation] as VALID
+    [Date Feature Extraction] as DATE
+    [Lag Feature Creation] as LAG
+    [Rolling Statistics] as ROLL
+    [Location Encoding] as LOC
+    [Cyclical Encoding] as CYCLIC
+    [Property Ratios] as RATIO
+    [Feature Selection] as SELECT
+    [Final Feature Matrix] as FINAL
+}
+
+RAW --> VALID
+VALID --> DATE
+DATE --> LAG
+LAG --> ROLL
+ROLL --> LOC
+LOC --> CYCLIC
+CYCLIC --> RATIO
+RATIO --> SELECT
+SELECT --> FINAL
+
+' Deployment Architecture
+cloud "Production Environment" {
+    [Streamlit Web App] as WEB
+    [Docker Container] as DOCKER
+    [Redis Cache] as REDIS
+    [Logging System] as LOGS
+    [Monitoring] as MONITOR
+}
+
+DOCKER --> WEB
+DOCKER --> REDIS
+DOCKER --> LOGS
+DOCKER --> MONITOR
+
+@enduml

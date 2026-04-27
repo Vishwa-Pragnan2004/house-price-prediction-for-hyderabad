@@ -1,0 +1,45 @@
+{
+  "data_hash": "0738277a14319d74529db961bf04b423",
+  "training_date": "2026-03-12T17:19:39.748213",
+  "training_info": {
+    "data_shape": [
+      20,
+      5
+    ],
+    "features_count": 11,
+    "test_metrics": {
+      "mae": 737670.2829046986,
+      "rmse": 933852.0295518119,
+      "mse": 872079613098.0382,
+      "r2": 0.567608496759572,
+      "mape": 19.818349004335154
+    }
+  },
+  "model_performance": {
+    "best_model": "gradient_boosting",
+    "best_score": 0.7243858000355048,
+    "all_models": {
+      "linear_regression": 0.45013831325561826,
+      "random_forest": 0.5498703310856139,
+      "gradient_boosting": 0.7243858000355048
+    }
+  },
+  "feature_columns": [
+    "location",
+    "total_sqft",
+    "bhk",
+    "bath",
+    "price_per_sqft",
+    "sqft_per_room",
+    "bath_per_bedroom",
+    "total_rooms",
+    "size_category",
+    "location_popularity",
+    "location_price_level"
+  ],
+  "data_shape": [
+    20,
+    5
+  ],
+  "model_version": "1.0"
+}
